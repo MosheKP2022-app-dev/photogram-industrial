@@ -3,7 +3,11 @@ task sample_data: :environment do
 
   if Rails.env.development? 
     FollowRequest.destroy_all
+    Photo.destroy_all
+    Comment.destroy_all
+    Like.destroy_all
     User.destroy_all
+   
   end
 
   12.times do
@@ -18,7 +22,7 @@ task sample_data: :environment do
     #   fake_user.save
 
         name = Faker::Name.first_name.downcase
-        u = User.create(
+        user = User.create(
           email: "#{name}@example.com",
           username: name,
           password: "password",
@@ -33,7 +37,6 @@ task sample_data: :environment do
 
   # p user.photo.caption
 
-   p "#{User.count} users have been created."
 
   users = User.all
 
@@ -51,11 +54,41 @@ task sample_data: :environment do
           status: FollowRequest.statuses.keys.sample)
       end
     end
-
-    
   end
 
+  users.each do |user|
+    photo = user.own_photos.create(
+    caption: Faker::Movies::Departed.quote,
+    image: "https://robohash.org/#{rand(999)}"
+    )
+
+    user.followers.each do |follower|
+
+      if rand < 0.5
+        # photo.fans << follower
+        photo.likes.create(
+          fan: follower
+        )
+      end
+
+      if rand < 0.3
+      photo.comments.create(
+        body: Faker::TvShows::Friends.quote,
+        author: follower
+      )
+      end
+
+     
+
+    end
+  end
+ 
+
+  p "#{User.count} users have been created"
   p "#{FollowRequest.count} follow requests have been created"
+  p "#{Like.count} likes have been created"
+  p "#{Photo.count} photos have been created"
+  p "#{Comment.count} comments have been created"
 
 
 end
