@@ -70,6 +70,7 @@ task sample_data: :environment do
     end
   end
 
+  10.times do 
   users.each do |user|
     photo = user.own_photos.create(
     caption: Faker::Movies::Departed.quote,
@@ -93,7 +94,7 @@ task sample_data: :environment do
       end
 
      
-
+    end
     end
   end
  
